@@ -5,10 +5,8 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var index = require('./routes/index');
-// var users = require('./routes/users');
-
-var activity = require('./activity.js')
+// var index = require('./routes/index');
+// var report = require('./routes/report');
 
 var app = express();
 
@@ -24,17 +22,32 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', function(req, res) {
+app.get('/', function(req, res) {
 
-  var now = new Date()
+    console.log('/ ...');
+    var now = new Date()
 
+    res.render('index', {
+        dateRange: 'MM/YY',
+        today: now.toISOString().substr(0,10)
+    })
+})
 
-  res.render('index', {
-      client: activity,
-      dateRange: 'MM/YY',
-      today: now.toISOString().substr(0,10)
-  })
-});
+app.get('/report/:id', function(req, res) {
+    console.log('/report');
+
+    var now = new Date()
+
+    res.render('report', {
+        client: {
+            name: req.params.id,
+            // name: 'abc',
+            fileName: 1234
+        },
+        dateRange: 'MM/YY',
+        today: now.toISOString().substr(0,10)
+    })
+})
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -57,5 +70,5 @@ app.use(function(err, req, res, next) {
 // module.exports = app;
 
 app.listen(3000, function() {
-  console.log('Listening')
+    console.log('Listening')
 })

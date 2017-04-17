@@ -2,7 +2,22 @@ extends layout
 
 block content
   div
-    h1 Unreported Activities Record
+    h1 Activities Record Form
+    h3 (Each recording should not cover activities more than one month)
+
+  br
+
+  div
+    table
+      tr
+        td(class="no-border") Client's Name:
+        td(class="input")= client.name
+      tr
+        td(class="no-border") File Number:
+        td(class="input")= client.fileNumber
+      tr
+        td(class="no-border") Month/Year Covered:
+        td(class="input")= dateRange
 
   br
 
@@ -36,4 +51,16 @@ block content
                 td
               - }
           - }
+
+  br
+  br
+
+  div
+    table(align="right")
+      tr
+        td(class="no-border") Name & Signature of Worker
+        td(class="input")
+      tr
+        td(class="no-border") Date:
+        td(class="input")= today
 

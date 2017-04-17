@@ -44,6 +44,7 @@ thead th {
   padding: 5px;
   border: 1px solid black;
   background-color: whitesmoke;
+  -webkit-print-color-adjust: exact;
 }
 
 td {
