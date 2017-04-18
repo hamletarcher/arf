@@ -38,10 +38,15 @@ table {
   table-layout: fixed;
 }
 
+thead {
+  display: table-header-group;
+}
+
+
 thead th {
-  vertical-align: top;
-  height: 20px;
-  padding: 5px;
+  /*vertical-align: top;*/
+  /*height: 20px;*/
+  padding: 2px;
   border: 1px solid black;
   background-color: whitesmoke;
   -webkit-print-color-adjust: exact;
@@ -53,6 +58,14 @@ td {
   padding: 2px;
   border: 1px solid black;
   page-break-inside: avoid;
+}
+
+tfoot{
+  display:table-footer-group;
+}
+
+img {
+  display: block;
 }
 
 .no-border {
@@ -70,7 +83,7 @@ td {
 .input {
   border: 0px;
   border-bottom: 1px solid black;
-  width: 300px;
+  width: 250px;
   white-space: nowrap;
 }
 
@@ -78,32 +91,24 @@ td {
   padding: 0px;
 }
 
-.th {
-  vertical-align: top;
-  /*height: 20px;*/
-  padding: 5px;
-  border: 1px solid black;
-  background-color: whitesmoke;
-  -webkit-print-color-adjust: exact;
-}
-
 .vertical {
   font-size: 70%;
   font-style: normal;
-  border: 1px solid black;
+  /*border: 1px solid black;*/
   border-bottom: 0px;
-  vertical-align: top;
-  text-align: left;
+  /*vertical-align: top;*/
+  /*text-align: left;*/
   writing-mode: tb-rl;
-  -webkit-transform: rotate(90deg);
-  -moz-transform: rotate(90deg);
-  -o-transform: rotate(90deg);
-  -ms-transform: rotate(90deg);
+  /*!*-webkit-transform: rotate(90deg);*!*/
+  /*!*-moz-transform: rotate(90deg);*!*/
+  /*!*-o-transform: rotate(90deg);*!*/
+  /*!*-ms-transform: rotate(90deg);*!*/
   transform: rotate(90deg);
   white-space: nowrap;
-  width: 5px;
+  /*width: 5px;*/
   /*height: 150px;*/
   padding: 2px;
+  background-color: rgba(0,0,0,0);
 }
 
 .left-floating-box {
@@ -124,4 +129,20 @@ td {
   /*height: 30px;*/
   padding: 5px;
   border: 1px solid black;
+}
+
+.left-footer-box{
+  bottom: 20px;
+  left: 38px;
+  position: fixed;
+  text-align: left;
+  font-size: 85%;
+  padding: 5px;
+  border: 1px solid black;
+}
+
+.right-footer{
+  bottom: 20px;
+  right: 38px;
+  position: fixed;
 }

@@ -2,6 +2,7 @@ var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
+var session = require('express-session');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
@@ -9,7 +10,7 @@ var bodyParser = require('body-parser');
 // var report = require('./routes/report');
 
 var app = express();
-var airtable = require('./airtable')
+var airtable = require('./air')
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -20,10 +21,34 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(session({secret: "7UYa0FGTS5aR"}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', function(req, res) {
+app.get('/authen', function(req, res) {
+    res.render('authen');
+})
+
+app.post('/authen', function(req, res) {
+    if (!req.body.secret) {
+        res.status('400')
+        res.send("Invalid secret")
+    } else {
+        req.session.secret = req.body.secret
+        res.redirect('/')
+    }
+})
+
+function checkAuthen(req, res, next) {
+    if(req.session.secret){
+        airtable.authen(req.session.secret)
+        next();     //If session exists, proceed to page
+    } else {
+        res.redirect('/authen')
+    }
+}
+
+app.get('/', checkAuthen, function(req, res) {
     airtable.listLog(function processLog(log) {
         var subjects = []
         for (i=0; i<log.length; i++) {
@@ -67,7 +92,7 @@ app.get('/', function(req, res) {
     })
 })
 
-app.get('/report/:id', function(req, res) {
+app.get('/report/:id', checkAuthen, function(req, res) {
     airtable.listLogById(req.params.id, function processLog(log) {
         var client = {
             id: req.params.id
@@ -84,7 +109,7 @@ app.get('/report/:id', function(req, res) {
 
                 for (k=0; k<people.length; k++) {
                     if (client.id === people[k].id) {
-                        client.name = people[k].get('Name (CN)')
+                        client.name = people[k].get('Initials')
                         client.fileNo = people[k].get('File Ref No')
                     }
                 }
@@ -93,11 +118,13 @@ app.get('/report/:id', function(req, res) {
                 var withWhom = log[i].get('With Whom')
                 var withWhomNames = []
                 for (j=0; j<withWhom.length; j++) {
-                    for (k=0; k<people.length; k++) {
-                        if (withWhom[j] === people[k].id) {
-                            withWhomNames.push(people[k].get('Name (CN)'))
-                        }
+                    if (withWhom[j] === client.id) {
+                        withWhomNames.push('Client')
+                        break
                     }
+                }
+                if (log[i].get('Relationship with Subject') !== undefined) {
+                    withWhomNames.push(log[i].get('Relationship with Subject'))
                 }
                 log[i].withWhomNames = withWhomNames.join(', ');
 
@@ -105,43 +132,45 @@ app.get('/report/:id', function(req, res) {
                 var natureRadio = new Array(10).fill('');
                 switch (log[i].get('Nature')) {
                     case 'Office interview':
-                        natureRadio[0] = 'x'
+                        natureRadio[0] = 'X'
                         break
                     case 'Visits':
-                        natureRadio[1] = 'x'
+                        natureRadio[1] = 'X'
                         break
                     case 'Telephone call':
-                        natureRadio[2] = 'x'
+                        natureRadio[2] = 'X'
                         break
                     case 'Letter/report/written referral':
-                        natureRadio[3] = 'x'
+                        natureRadio[3] = 'X'
                         break
                     case 'Group program session':
-                        natureRadio[4] = 'x'
+                        natureRadio[4] = 'X'
                         break
                     case 'Case discussion':
-                        natureRadio[5] = 'x'
+                        natureRadio[5] = 'X'
                         break
                     case 'Collateral contact':
-                        natureRadio[6] = 'x'
+                        natureRadio[6] = 'X'
                         break
                     case 'Case conference':
-                        natureRadio[7] = 'x'
+                        natureRadio[7] = 'X'
                         break
                     case 'Escort':
-                        natureRadio[8] = 'x'
+                        natureRadio[8] = 'X'
                         break
                     default:
-                        natureRadio[9] = 'x'
+                        natureRadio[9] = 'X'
                 }
                 log[i].natureRadio = natureRadio
 
                 // format stuff
+                log[i].description = ''
+
                 if (log[i].get('Key Issues Discussed') !==  undefined) {
-                    log[i].description = log[i].get('Key Issues Discussed')
+                    log[i].description += log[i].get('Key Issues Discussed')
                         .replace(/^\s+|\s+$/g, '').replace(/\n\s*\n/g, '\n');
-                } else {
-                    log[i].description = log[i].get('Issues Discussed')
+                } else if (log[i].get('Issues Discussed') !== undefined) {
+                    log[i].description += log[i].get('Issues Discussed')
                         .replace(/^\s+|\s+$/g, '').replace(/\n\s*\n/g, '\n');
                 }
 
@@ -151,12 +180,12 @@ app.get('/report/:id', function(req, res) {
                 }
 
                 if (log[i].get('Plan') !== undefined) {
-                    log[i].description += '\n\n<b>Plan:</b>\n' + log[i].get('Plan').replace(/\n$/, "")
+                    log[i].description += '\n\n<b>Plan:</b>\n' + log[i].get('Plan')
                             .replace(/^\s+|\s+$/g, '').replace(/\n\s*\n/g, '\n');
                 }
 
                 log[i].description = log[i].description.replace(new RegExp('\n', 'g'), '<br />')
-                console.log(log[i])
+                // console.log(log[i])
             }
 
             log.sort(function(a, b) {return a.get('Date') > b.get('Date')});
@@ -173,6 +202,14 @@ app.get('/report/:id', function(req, res) {
 
             airtable.updateReportDates(logIds)
         })
+    })
+})
+
+app.get('/footer', function(req, res) {
+    var now = new Date()
+    res.render('footer', {
+        title: 'ARF Footer',
+        today: now.toISOString().substr(0,10)
     })
 })
 
@@ -194,8 +231,8 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-// module.exports = app;
-
 app.listen(3000, function() {
     console.log('Listening')
 })
+
+module.exports = app;

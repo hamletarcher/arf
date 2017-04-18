@@ -1,70 +1,109 @@
 extends layout
 
 block content
-  div
-    h1 Activities Record Form
-    h3 (Each recording should not cover activities more than one month)
 
-  br
-
-  div
-    table
-      tr
-        td(class="no-border") Client's Name:
-        td(class="input")= client.name
-      tr
-        td(class="no-border") File Number:
-        td(class="input")= client.fileNo
-      tr
-        td(class="no-border") Month/Year Covered:
-        td(class="input")= dateRange
-
-  br
-
+  body
   div
     table(class="fixed-table")
+      thead
+        tr
+          td(width="50px", class='no-border')
+          td(width="50px", class='no-border')
+          td(colspan="10", width="152px", class='no-border')
+          td(class='no-border')
+        tr
+          td(colspan="13", class="no-border")
+            div(class="right-floating-box") HKFWS/SSW/SR/ARF
+            table(class="fixed-table no-border")
+              tr
+                td(class="no-border")
+                  h2 HONG KONG FAMILY WELFARE SOCIETY
+                    br
+                    | SCHOOL SOCIAL WORK SERVICE
+        tr
+          td(colspan="13", class='no-border')
+              h1 Activities Record Form
+              h3 (Each recording should not cover activities more than one month)
+        tr
+          td(class='no-border', colspan="13")
+            div
+              table
+                tr
+                  td(class="no-border") Client's Name:
+                  td(class="input")= client.name
+                tr
+                  td(class="no-border") File Number:
+                  td(class="input")= client.fileNo
+                tr
+                  td(class="no-border") Month/Year Covered:
+                  td(class="input")= dateRange
+        tr(height="5px")
+        tr
+          th Date
+          th With Whom
+          th(colspan="10", padding="0px", vertical-align="bottom")
+            img(src='/images/Nature.png', width="147px")
+          th Significant Fact(s), Intervention and Progress related to the problem(s)
+          //tr
+          //  th(class="vertical") O.I.
+          //  th(class="vertical") Visits
+          //  th(class="vertical") T.C.
+          //  th(class="vertical") Letter/Report Written Referral
+          //  th(class="vertical") Gp./Prog. Session for Clients
+          //  th(class="vertical") Case discussion
+          //  th(class="vertical") Collateral Contact
+          //  th(class="vertical") Case conference
+          //  th(class="vertical") Escort
+          //  th(class="vertical") Others
+          //tr(height="125px")
+          //  - for (var i=0; i<10; i++) {
+          //  td(class="no-top")
+          //  - }
       tbody
+        - for (var i=0; i<activities.length; i++) {
           tr
-            th(class="th", rowspan="3", width="70px") Date
-            th(class="th", rowspan="3", width="70px") With Whom
-            th(class="th", colspan="10", width="170px") Nature of Contacts
-            th(class="th", rowspan="3") Significant Fact(s), Intervention and Progress related to the problem(s)
-          tr
-            th(class="vertical") O.I.
-            th(class="vertical") Visits
-            th(class="vertical") T.C.
-            th(class="vertical") Letter/Report Written Referral
-            th(class="vertical") Gp./Prog. Session for Clients
-            th(class="vertical") Case discussion
-            th(class="vertical") Collateral Contact
-            th(class="vertical") Case conference
-            th(class="vertical") Escort
-            th(class="vertical") Others
-          tr(height="115px")
-            - for (var i=0; i<10; i++) {
-            td(class="no-top")
+            td= activities[i].get('Date').substr(5,5)
+            td= activities[i].withWhomNames
+            - for (var j=0; j<10; j++) {
+              td= activities[i].natureRadio[j]
             - }
+            td
+              !{activities[i].description}
+        - }
+      tfooter
+        tr(height="30px")
+        tr
+          td(colspan="13", class="no-border")
+            div
+              table(align="right")
+                tr
+                  td(class="no-border") Name & Signature of Worker:
+                  td(class="input")
+                tr
+                  td(class="no-border") Date:
+                  td(class="input")
+            div(class="left-floating-box") Reviewed at YSM 12/Jan/2015
+  //footer
+  //
+  //br
+  //br
+  //
+  //div
+  //  table(align="right")
+  //    tr
+  //      td(class="no-border") Name & Signature of Worker:
+  //      td(class="input")
+  //    tr
+  //      td(class="no-border") Date:
+  //      td(class="input")
+  //div(class="left-floating-box") Reviewed at YSM 12/Jan/2015
 
-          - for (var i=0; i<activities.length; i++) {
-            tr
-              td= activities[i].get('Date')
-              td= activities[i].withWhomNames
-              - for (var j=0; j<10; j++) {
-                td= activities[i].natureRadio[j]
-              - }
-              td
-                !{activities[i].description}
-          - }
-
-  br
-  br
-
-  div
-    table(align="right")
-      tr
-        td(class="no-border") Name & Signature of Worker
-        td(class="input")
-      tr
-        td(class="no-border") Date:
-        td(class="input")= today
-
+  //div(class="footer")
+  //  table(align="right")
+  //    tr
+  //      td(class="no-border") Name & Signature of Worker:
+  //      td(class="input")
+  //    tr
+  //      td(class="no-border") Date:
+  //      td(class="input")
+  //div(class="left-floating-box") Reviewed at YSM 12/Jan/2015

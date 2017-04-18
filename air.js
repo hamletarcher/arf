@@ -2,9 +2,17 @@
  * Created by KL on 2017/4/17.
  */
 
-const base = require('airtable').base('appi1gYl3ExDM7cW7');
-
+var at = require('airtable')
 var airtable = {}
+var base
+
+airtable.authen = function(apiKey) {
+    at.configure({
+        endpointUrl: 'https://api.airtable.com',
+        apiKey: apiKey
+    })
+    base = at.base('appi1gYl3ExDM7cW7');
+}
 
 airtable.listLog = function(callback) {
     var result = []
@@ -34,7 +42,7 @@ airtable.listPeople = function (callback) {
 
     base('People').select({
         view: "People",
-        fields: ['Name (CN)', 'File Ref No']
+        fields: ['Name (CN)', 'Initials', 'File Ref No']
     }).eachPage(function page(records, fetchNextPage) {
         // This function (`page`) will get called for each page of records.
 

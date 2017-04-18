@@ -3,16 +3,13 @@ html
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
+    style(type='text/css').
+      @page {
+        margin: 0cm 0cm 2cm 0cm
+      }
   body
-    header
-    table(class="fixed-table no-border")
-      tr
-        td(class="no-border" width="20%")
-        td(class="no-border")
-          h2 HONG KONG FAMILY WELFARE SOCIETY
-            br
-            | SCHOOL SOCIAL WORK SERVICE
-        td(class="no-border" width="20%")
-        div(class="right-floating-box") HKFWS/SSW/SR/ARF
+
     block content
-    div(class="left-floating-box") Reviewed at YSM 12/Jan/2015
+
+
+
