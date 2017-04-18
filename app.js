@@ -9,6 +9,7 @@ var bodyParser = require('body-parser');
 // var report = require('./routes/report');
 
 var app = express();
+var airtable = require('./airtable')
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -23,13 +24,45 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', function(req, res) {
+    airtable.listLog(function processLog(log) {
+        var subjects = []
+        for (i=0; i<log.length; i++) {
+            var logSub = log[i].get('Subject')
+            for (j=0; j<logSub.length; j++) {
+                var index = -1
+                for (k=0; k<subjects.length; k++) {
+                    if (subjects[k].id == logSub[j]) {
+                        index = k
+                        break
+                    }
+                }
+                if (index < 0) {
+                    subjects.push({
+                        id: logSub[j],
+                        activities: [log[i]]
+                    })
+                } else {
+                    subjects[index].activities.push(log[i])
+                }
+            }
+        }
 
-    console.log('/ ...');
-    var now = new Date()
+        airtable.listPeople(function addNames(people) {
+            for (i=0; i<subjects.length; i++) {
+                for (j=0; j<people.length; j++) {
+                    if (subjects[i].id === people[j].id) {
+                        subjects[i].name = people[j].get('Name (CN)')
+                        subjects[i].fileNo = people[j].get('File Ref No')
+                    }
+                }
+            }
 
-    res.render('index', {
-        dateRange: 'MM/YY',
-        today: now.toISOString().substr(0,10)
+            subjects.sort(function(a, b) {return a.name > b.name});
+
+            res.render('index', {
+                subjects: subjects
+            })
+        })
     })
 })
 

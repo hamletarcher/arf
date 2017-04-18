@@ -2,38 +2,28 @@ extends layout
 
 block content
   div
-    h1 Unreported Activities Record
+    h1 Unreported Activities Records
 
   br
 
   div
-    table(class="fixed-table")
+    table(align="center")
         thead
           tr
-            th(rowspan="3", width="50px") Date
-            th(rowspan="3", width="100px") With Whom
-            th(colspan="10", width="200px") Nature of Contacts
-            th(rowspan="3") Significant Fact(s), Intervention and Progress related to the problem(s)
-          tr
-            td(class="vertical") O.I.
-            td(class="vertical") Visits
-            td(class="vertical") T.C.
-            td(class="vertical") Letter/Report Written Referral
-            td(class="vertical") Gp./Prog. Session for Clients
-            td(class="vertical") Case discussion
-            td(class="vertical") Collateral Contact
-            td(class="vertical") Case conference
-            td(class="vertical") Escort
-            td(class="vertical") Others
-          tr(height="115px")
-            - for (var i=0; i<10; i++) {
-              td(class="no-top")
-            - }
+            th With Whom
+            th File No.
+            //th(width="200px") Date Range
+            th # of Activites
+            th Actions
         tbody
-          - for (var i=0; i<10; i++) {
+          - for (var i=0; i<subjects.length; i++) {
             tr
-              - for (var j=0; j<13; j++) {
-                td
-              - }
+              td= subjects[i].name
+              td= subjects[i].fileNo
+              td(align="center")= subjects[i].activities.length
+              td
+                a(href='/report/' + subjects[i].id) Generate Report
           - }
+
+  br
 
