@@ -77,7 +77,11 @@ app.get('/report/:id', function(req, res) {
             throw "No record found"
 
         airtable.listPeople(function addNames(people) {
+            var logIds = []
+
             for (i=0; i<log.length; i++) {
+                logIds.push(log[i].id)
+
                 for (k=0; k<people.length; k++) {
                     if (client.id === people[k].id) {
                         client.name = people[k].get('Name (CN)')
@@ -166,6 +170,8 @@ app.get('/report/:id', function(req, res) {
                 dateRange: log[0].get('Date').substr(0,7) + ' to ' + log[log.length-1].get('Date').substr(0,7),
                 today: now.toISOString().substr(0,10)
             })
+
+            airtable.updateReportDates(logIds)
         })
     })
 })
