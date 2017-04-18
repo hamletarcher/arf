@@ -52,6 +52,7 @@ td {
   height: 18px;
   padding: 2px;
   border: 1px solid black;
+  page-break-inside: avoid;
 }
 
 .no-border {
@@ -77,8 +78,18 @@ td {
   padding: 0px;
 }
 
+.th {
+  vertical-align: top;
+  /*height: 20px;*/
+  padding: 5px;
+  border: 1px solid black;
+  background-color: whitesmoke;
+  -webkit-print-color-adjust: exact;
+}
+
 .vertical {
-  font-size: 75%;
+  font-size: 70%;
+  font-style: normal;
   border: 1px solid black;
   border-bottom: 0px;
   vertical-align: top;

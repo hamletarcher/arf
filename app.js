@@ -60,6 +60,7 @@ app.get('/', function(req, res) {
             subjects.sort(function(a, b) {return a.name > b.name});
 
             res.render('index', {
+                title: 'ARF',
                 subjects: subjects
             })
         })
@@ -67,18 +68,105 @@ app.get('/', function(req, res) {
 })
 
 app.get('/report/:id', function(req, res) {
-    console.log('/report');
+    airtable.listLogById(req.params.id, function processLog(log) {
+        var client = {
+            id: req.params.id
+        }
 
-    var now = new Date()
+        if (log.length == 0)
+            throw "No record found"
 
-    res.render('report', {
-        client: {
-            name: req.params.id,
-            // name: 'abc',
-            fileName: 1234
-        },
-        dateRange: 'MM/YY',
-        today: now.toISOString().substr(0,10)
+        airtable.listPeople(function addNames(people) {
+            for (i=0; i<log.length; i++) {
+                for (k=0; k<people.length; k++) {
+                    if (client.id === people[k].id) {
+                        client.name = people[k].get('Name (CN)')
+                        client.fileNo = people[k].get('File Ref No')
+                    }
+                }
+
+                // add with whom names
+                var withWhom = log[i].get('With Whom')
+                var withWhomNames = []
+                for (j=0; j<withWhom.length; j++) {
+                    for (k=0; k<people.length; k++) {
+                        if (withWhom[j] === people[k].id) {
+                            withWhomNames.push(people[k].get('Name (CN)'))
+                        }
+                    }
+                }
+                log[i].withWhomNames = withWhomNames.join(', ');
+
+                // add nature of contacts radio button position
+                var natureRadio = new Array(10).fill('');
+                switch (log[i].get('Nature')) {
+                    case 'Office interview':
+                        natureRadio[0] = 'x'
+                        break
+                    case 'Visits':
+                        natureRadio[1] = 'x'
+                        break
+                    case 'Telephone call':
+                        natureRadio[2] = 'x'
+                        break
+                    case 'Letter/report/written referral':
+                        natureRadio[3] = 'x'
+                        break
+                    case 'Group program session':
+                        natureRadio[4] = 'x'
+                        break
+                    case 'Case discussion':
+                        natureRadio[5] = 'x'
+                        break
+                    case 'Collateral contact':
+                        natureRadio[6] = 'x'
+                        break
+                    case 'Case conference':
+                        natureRadio[7] = 'x'
+                        break
+                    case 'Escort':
+                        natureRadio[8] = 'x'
+                        break
+                    default:
+                        natureRadio[9] = 'x'
+                }
+                log[i].natureRadio = natureRadio
+
+                // format stuff
+                if (log[i].get('Key Issues Discussed') !==  undefined) {
+                    log[i].description = log[i].get('Key Issues Discussed')
+                        .replace(/^\s+|\s+$/g, '').replace(/\n\s*\n/g, '\n');
+                } else {
+                    log[i].description = log[i].get('Issues Discussed')
+                        .replace(/^\s+|\s+$/g, '').replace(/\n\s*\n/g, '\n');
+                }
+
+                if (log[i].get('Intervention') !== undefined) {
+                    log[i].description += '\n\n<b>Intervention:</b>\n' + log[i].get('Intervention')
+                            .replace(/^\s+|\s+$/g, '').replace(/\n\s*\n/g, '\n');
+                }
+
+                if (log[i].get('Plan') !== undefined) {
+                    log[i].description += '\n\n<b>Plan:</b>\n' + log[i].get('Plan').replace(/\n$/, "")
+                            .replace(/^\s+|\s+$/g, '').replace(/\n\s*\n/g, '\n');
+                }
+
+                log[i].description = log[i].description.replace(new RegExp('\n', 'g'), '<br />')
+                console.log(log[i])
+            }
+
+            log.sort(function(a, b) {return a.get('Date') > b.get('Date')});
+
+            var now = new Date()
+
+            res.render('report', {
+                title: 'ARF ' + client.name,
+                client: client,
+                activities: log,
+                dateRange: log[0].get('Date').substr(0,7) + ' to ' + log[log.length-1].get('Date').substr(0,7),
+                today: now.toISOString().substr(0,10)
+            })
+        })
     })
 })
 

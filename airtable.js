@@ -50,8 +50,40 @@ airtable.listPeople = function (callback) {
     })
 }
 
-airtable.report = function(id, callback) {
+airtable.listLogById = function(id, callback) {
+    var result = []
 
+    base('Log').select({
+        view: "Report",
+        filterByFormula: 'AND(LEN({With Whom})!=0, LEN({Subject})!=0)',
+        sort: [{field: "Date", direction: "asc"}]
+    }).eachPage(function page(records, fetchNextPage) {
+        for (i=0; i<records.length; i++) {
+            var subArr = records[i].get('Subject')
+            for (j=0; j<subArr.length; j++) {
+                if (subArr[j] == id) {
+                    result.push(records[i])
+                    break
+                }
+            }
+        }
+        fetchNextPage()
+    }, function done(err) {
+        if (err) { console.error(err); return; }
+        callback(result)
+    })
+}
+
+airtable.updateReportDates = function(ids) {
+    var today = new Date()
+    today = today.toISOString().substr(0, 10)
+    for (i=0; i<ids.length; i++) {
+        base('Log').update(ids[i], {
+            'Report Date': today
+        }, function(err, record) {
+            if (err) { console.error(err); return; }
+        });
+    }
 }
 
 module.exports = airtable
