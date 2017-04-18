@@ -188,7 +188,11 @@ app.get('/report/:id', checkAuthen, function(req, res) {
                 // console.log(log[i])
             }
 
-            log.sort(function(a, b) {return a.get('Date') > b.get('Date')});
+            log.sort(function(a, b) {
+                a = a.get('Date')
+                b = b.get('Date')
+                return a > b ? 1 : a < b ? -1 : 0
+            });
 
             var now = new Date()
 

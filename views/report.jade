@@ -7,8 +7,8 @@ block content
     table(class="fixed-table")
       thead
         tr
-          td(width="50px", class='no-border')
-          td(width="50px", class='no-border')
+          td(width="70px", class='no-border')
+          td(width="70px", class='no-border')
           td(colspan="10", width="152px", class='no-border')
           td(class='no-border')
         tr
@@ -62,7 +62,7 @@ block content
       tbody
         - for (var i=0; i<activities.length; i++) {
           tr
-            td= activities[i].get('Date').substr(5,5)
+            td= activities[i].get('Date')
             td= activities[i].withWhomNames
             - for (var j=0; j<10; j++) {
               td= activities[i].natureRadio[j]
@@ -71,7 +71,7 @@ block content
               !{activities[i].description}
         - }
       tfooter
-        tr(height="30px")
+        tr(height="50px")
         tr
           td(colspan="13", class="no-border")
             div
@@ -83,27 +83,3 @@ block content
                   td(class="no-border") Date:
                   td(class="input")
             div(class="left-floating-box") Reviewed at YSM 12/Jan/2015
-  //footer
-  //
-  //br
-  //br
-  //
-  //div
-  //  table(align="right")
-  //    tr
-  //      td(class="no-border") Name & Signature of Worker:
-  //      td(class="input")
-  //    tr
-  //      td(class="no-border") Date:
-  //      td(class="input")
-  //div(class="left-floating-box") Reviewed at YSM 12/Jan/2015
-
-  //div(class="footer")
-  //  table(align="right")
-  //    tr
-  //      td(class="no-border") Name & Signature of Worker:
-  //      td(class="input")
-  //    tr
-  //      td(class="no-border") Date:
-  //      td(class="input")
-  //div(class="left-floating-box") Reviewed at YSM 12/Jan/2015
