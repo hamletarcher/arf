@@ -2,7 +2,10 @@ var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
-var session = require('express-session');
+var session = require('cookie-session');
+// var MongoStore = require('connect-mongo')(express);
+// var RedisStore = require('connect-redis')(session)
+// var sessionStore = new MongoStore({db: 'secret'});
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
@@ -21,8 +24,18 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(session({secret: "7UYa0FGTS5aR"}));
 app.use(cookieParser());
+app.use(session({
+    secret: "7UYa0FGTS5aR",
+    // store: sessionStore,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        secure: false,
+        maxAge: 100000,
+        originalMaxAge: 100000
+    }
+}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/authen', function(req, res) {
@@ -44,6 +57,7 @@ function checkAuthen(req, res, next) {
         airtable.authen(req.session.secret)
         next();     //If session exists, proceed to page
     } else {
+        console.log('no secret: '+req.session.secret)
         res.redirect('/authen')
     }
 }
