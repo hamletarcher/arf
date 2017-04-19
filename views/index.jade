@@ -14,7 +14,7 @@ block content
             th File No.
             //th(width="200px") Date Range
             th # of Activites
-            th Actions
+            th Generate Report
         tbody
           - for (var i=0; i<subjects.length; i++) {
             tr
@@ -22,7 +22,12 @@ block content
               td= subjects[i].fileNo
               td(align="center")= subjects[i].activities.length
               td
-                a(href='/report/' + subjects[i].id) Generate Report
+                - for (var j=0; j<subjects[i].reportDates.length; j++) {
+                  - if (j != 0) {
+                  | &nbsp;/&nbsp;
+                  - }
+                  a(href='/report/'+ subjects[i].id +'/'+ subjects[i].reportDates[j].year +'/'+ subjects[i].reportDates[j].month) #{subjects[i].reportDates[j].year}-#{subjects[i].reportDates[j].month}
+                - }
           - }
 
   br

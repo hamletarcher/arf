@@ -52,6 +52,11 @@ app.get('/', checkAuthen, function(req, res) {
     airtable.listLog(function processLog(log) {
         var subjects = []
         for (i=0; i<log.length; i++) {
+            var date = new Date(log[i].get('Date'))
+            var reportDate = {
+                year: date.getFullYear(),
+                month: date.getMonth()+1
+            }
             var logSub = log[i].get('Subject')
             for (j=0; j<logSub.length; j++) {
                 var index = -1
@@ -64,10 +69,22 @@ app.get('/', checkAuthen, function(req, res) {
                 if (index < 0) {
                     subjects.push({
                         id: logSub[j],
-                        activities: [log[i]]
+                        activities: [log[i]],
+                        reportDates: [reportDate]
                     })
                 } else {
                     subjects[index].activities.push(log[i])
+                    var exists = false;
+                    for (k=0; k<subjects[index].reportDates.length; k++) {
+                        if (subjects[index].reportDates[k].year === reportDate.year &&
+                            subjects[index].reportDates[k].month === reportDate.month) {
+                            exists = true;
+                            break;
+                        }
+                    }
+                    if (!exists) {
+                        subjects[index].reportDates.push(reportDate)
+                    }
                 }
             }
         }
@@ -92,8 +109,8 @@ app.get('/', checkAuthen, function(req, res) {
     })
 })
 
-app.get('/report/:id', checkAuthen, function(req, res) {
-    airtable.listLogById(req.params.id, function processLog(log) {
+app.get('/report/:id/:year/:month', checkAuthen, function(req, res) {
+    airtable.listLogByIdAndDate(req.params.id, req.params.year, req.params.month, function processLog(log) {
         var client = {
             id: req.params.id
         }
@@ -197,10 +214,10 @@ app.get('/report/:id', checkAuthen, function(req, res) {
             var now = new Date()
 
             res.render('report', {
-                title: 'ARF ' + client.name,
+                title: 'ARF '+ client.name +' '+ req.params.year + '-' + req.params.month,
                 client: client,
                 activities: log,
-                dateRange: log[0].get('Date').substr(0,7) + ' to ' + log[log.length-1].get('Date').substr(0,7),
+                dateRange: (req.params.month < 10 ? '0' : '') + req.params.month + '/' + req.params.year,
                 today: now.toISOString().substr(0,10)
             })
 

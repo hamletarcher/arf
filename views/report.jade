@@ -7,9 +7,9 @@ block content
     table(class="fixed-table")
       thead
         tr
-          td(width="70px", class='no-border')
-          td(width="70px", class='no-border')
-          td(colspan="10", width="152px", class='no-border')
+          td(width="40px", class='no-border')
+          td(width="80px", class='no-border')
+          td(colspan="10", width="130px", class='no-border')
           td(class='no-border')
         tr
           td(colspan="13", class="no-border")
@@ -36,13 +36,13 @@ block content
                   td(class="input")= client.fileNo
                 tr
                   td(class="no-border") Month/Year Covered:
-                  td(class="input")= dateRange
+                  td(class="input") (MM/YY) #{dateRange}
         tr(height="5px")
         tr
           th Date
           th With Whom
           th(colspan="10", padding="0px", vertical-align="bottom")
-            img(src='/images/Nature.png', width="147px")
+            img(src='/images/Nature.png', width="126px")
           th Significant Fact(s), Intervention and Progress related to the problem(s)
           //tr
           //  th(class="vertical") O.I.
@@ -62,7 +62,7 @@ block content
       tbody
         - for (var i=0; i<activities.length; i++) {
           tr
-            td= activities[i].get('Date')
+            td= activities[i].get('Date').substr(8, 2)
             td= activities[i].withWhomNames
             - for (var j=0; j<10; j++) {
               td= activities[i].natureRadio[j]

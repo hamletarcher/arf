@@ -58,12 +58,12 @@ airtable.listPeople = function (callback) {
     })
 }
 
-airtable.listLogById = function(id, callback) {
+airtable.listLogByIdAndDate = function(id, year, month, callback) {
     var result = []
 
     base('Log').select({
         view: "Report",
-        filterByFormula: 'AND(LEN({With Whom})!=0, LEN({Subject})!=0)',
+        filterByFormula: 'AND(LEN({With Whom})!=0, LEN({Subject})!=0, YEAR({Date})='+year+', MONTH({Date})='+month+')',
         sort: [{field: "Date", direction: "asc"}]
     }).eachPage(function page(records, fetchNextPage) {
         for (i=0; i<records.length; i++) {
