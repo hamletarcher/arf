@@ -81,7 +81,7 @@ img {
   border-bottom: 0px;
 }
 
-.input {
+.input-box {
   border: 0px;
   border-bottom: 1px solid black;
   width: 250px;
@@ -146,4 +146,12 @@ img {
   bottom: 20px;
   right: 38px;
   position: fixed;
+}
+
+.print-report{
+  color: #FF00000;
+}
+
+form {
+  display: inline-block;
 }

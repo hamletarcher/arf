@@ -200,10 +200,10 @@ app.get('/report/:id/:year/:month', checkAuthen, function(req, res) {
                 log[i].description = ''
 
                 if (log[i].get('Key Issues Discussed') !==  undefined) {
-                    log[i].description += log[i].get('Key Issues Discussed')
+                    log[i].description += '<b>Key Issues Discussed:</b>\n' + log[i].get('Key Issues Discussed')
                         .replace(/^\s+|\s+$/g, '').replace(/\n\s*\n/g, '\n');
                 } else if (log[i].get('Issues Discussed') !== undefined) {
-                    log[i].description += log[i].get('Issues Discussed')
+                    log[i].description += '<b>Key Issues Discussed:</b>\n' + log[i].get('Issues Discussed')
                         .replace(/^\s+|\s+$/g, '').replace(/\n\s*\n/g, '\n');
                 }
 

@@ -24,9 +24,12 @@ block content
               td
                 - for (var j=0; j<subjects[i].reportDates.length; j++) {
                   - if (j != 0) {
-                  | &nbsp;/&nbsp;
+                  | &nbsp;&nbsp;
                   - }
-                  a(href='/report/'+ subjects[i].id +'/'+ subjects[i].reportDates[j].year +'/'+ subjects[i].reportDates[j].month) #{subjects[i].reportDates[j].year}-#{subjects[i].reportDates[j].month}
+                  //a(href='/report/'+ subjects[i].id +'/'+ subjects[i].reportDates[j].year +'/'+ subjects[i].reportDates[j].month) #{subjects[i].reportDates[j].year}-#{subjects[i].reportDates[j].month}
+                  form(name='report-button', method='LINK', action='/report/'+ subjects[i].id +'/'+ subjects[i].reportDates[j].year +'/'+ subjects[i].reportDates[j].month)
+                    div.actions
+                      input(type='submit', value='#{subjects[i].reportDates[j].year}-#{subjects[i].reportDates[j].month}')
                 - }
           - }
 

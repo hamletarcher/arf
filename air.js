@@ -41,7 +41,7 @@ airtable.listPeople = function (callback) {
     var result = []
 
     base('People').select({
-        view: "People",
+        view: "Report",
         fields: ['Name (CN)', 'Initials', 'File Ref No']
     }).eachPage(function page(records, fetchNextPage) {
         // This function (`page`) will get called for each page of records.
